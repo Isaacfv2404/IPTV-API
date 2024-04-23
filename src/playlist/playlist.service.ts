@@ -1,6 +1,6 @@
 import { Injectable, Res } from '@nestjs/common';
 import { parse} from 'iptv-playlist-parser';
-import { Playlist } from '../interfaces/playlist.interface';
+import { Playlist } from './entities/playlist.entity';
 import  {createReadStream} from 'fs';
 import { join } from 'path';
 import {pipeline} from 'stream';

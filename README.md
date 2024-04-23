@@ -60,12 +60,12 @@ $ npm run test:cov
 
 ## Prisma
 
-```
+```bash
 Migrar base de datos:
-npx prisma migrate dev --name init
+$ npx prisma migrate dev --name init
 
 Gestor Prisma Studio:
-npx prisma studio
+$ npx prisma studio
 ```
 
 ## Support

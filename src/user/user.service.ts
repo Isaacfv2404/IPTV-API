@@ -1,37 +1,26 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-;
+import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>
-  ) {}
+  constructor(private prisma: PrismaService) { }
 
 
   async create(createUserDto: CreateUserDto) {
     const saltOrRounds = 10;
-    try{
-      createUserDto.password = bcrypt.hashSync(createUserDto.password, saltOrRounds);
-      const user = this.userRepository.create(createUserDto);//Guardo en memoria
-      await this.userRepository.save(user);//Guardo en la base de datos
-
-    }catch(error){
-      console.log(error);
-      this.handleDBExceptions(error);
-    }
-
+    createUserDto.password = bcrypt.hashSync(createUserDto.password, saltOrRounds);
+    await this.prisma.user.create({
+      data: createUserDto,
+    });
     return createUserDto;
   }
 
   findAll() {
-    return this.userRepository.find();
+    return this.prisma.user.findMany();
   }
 
   findOne(id: number) {
@@ -48,25 +37,8 @@ export class UserService {
 
   async fillDB(user: User[]) {
 
-    user.forEach(async (userI) => {;
-    try{
-      const user = this.userRepository.create(userI);//Guardo en memoria
-      await this.userRepository.save(user);//Guardo en la base de datos
-
-    }catch(error){
-      console.log(error);
-      throw new InternalServerErrorException('Error creating user');
-    }
-  });
+    await this.prisma.user.createMany({ data: user });
 
     return user;
-  }
-
-  private handleDBExceptions(error:any){
-    if(error.code === '23505'){
-      throw new BadRequestException(error.detail);
-    }else{
-      this.handleDBExceptions(error);
-    }
   }
 }

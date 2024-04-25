@@ -1,13 +1,13 @@
-import { IsBoolean, IsDate, IsOptional, IsString, MinLength } from "class-validator";
+import { IsBoolean, IsDate, IsString } from "class-validator";
 
 export class CreateUserDto {
 
     @IsString()
-    @MinLength(1)
     email: string;
 
 
     @IsString()
+  
     password: string;
 
     @IsString()
@@ -17,14 +17,8 @@ export class CreateUserDto {
     lastName: string;
 
     @IsBoolean()
-    @IsOptional()
-    isActive?: boolean;
+    isActive: boolean;
 
-    @IsDate()
-    @IsOptional()
     createdAt?: Date;
-
-    @IsDate()
-    @IsOptional()
     updatedAt?: Date;
 }

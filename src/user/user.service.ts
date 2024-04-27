@@ -7,6 +7,7 @@ import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PaginationDto } from '../common/dtos/pagination.dto';
+import {validate as isUUID} from 'uuid';
 
 @Injectable()
 export class UserService {
@@ -40,9 +41,16 @@ export class UserService {
     });
   }
 
-  async findOne(id: string) {
-    const user = await this.userRepository.findOneBy({ id });
-    if (!user) throw new BadRequestException(`User with id ${id} not found`);
+  async findOne(term: string) {
+    let user: User;
+
+    if(isUUID(term)){
+      user = await this.userRepository.findOneBy({id:term});
+    }else{
+      const queryBuilder = this.userRepository.createQueryBuilder();//Se previene la inyección de SQL
+      user = await queryBuilder.where('email = :email', {email: term.toLowerCase()}).getOne();
+    }
+    if (!user) throw new BadRequestException(`User with ${term} not found`);
     return user;
   }
 

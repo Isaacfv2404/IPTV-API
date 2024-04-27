@@ -20,7 +20,7 @@ import { CommonModule } from './common/common.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
     }),PlaylistModule, UserModule, SeedModule, AuthModule, CommonModule],
   controllers: [AppController],
   providers: [AppService],

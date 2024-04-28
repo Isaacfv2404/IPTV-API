@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto,UpdateUserDto } from './dto';
+import { CreateUserDto,LoginUserDto,UpdateUserDto } from './dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 
 @Controller('auth')
@@ -13,7 +14,13 @@ export class AuthController {
     return this.authService.create(createUserDto);
   }
 
+  @Post('login')
+  login(@Body() loginUserDto: LoginUserDto) {
+    return this.authService.login(loginUserDto);
+  }
+
   @Get('users')
+  @UseGuards(AuthGuard())
   findAll(@Query() paginationDto: PaginationDto) {
     console.log(paginationDto);
     return this.authService.findAll(paginationDto);

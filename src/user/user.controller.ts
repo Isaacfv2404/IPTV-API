@@ -39,3 +39,4 @@ export class UserController {
     return this.userService.findUser(credentials.gmail, credentials.password);
   }
 }
+

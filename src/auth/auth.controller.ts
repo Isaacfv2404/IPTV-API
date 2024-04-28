@@ -1,34 +1,43 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { CreateUserDto,LoginUserDto,UpdateUserDto } from './dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { AuthGuard } from '@nestjs/passport';
+
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @Post('register')
+  createUser(@Body() createUserDto: CreateUserDto) {
+    return this.authService.create(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @Post('login')
+  login(@Body() loginUserDto: LoginUserDto) {
+    return this.authService.login(loginUserDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
+  @Get('users')
+  @UseGuards(AuthGuard())
+  findAll(@Query() paginationDto: PaginationDto) {
+    console.log(paginationDto);
+    return this.authService.findAll(paginationDto);
+  }
+
+  @Get('users:term')
+  findOne(@Param('term') term: string) {
+    return this.authService.findOne(term);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.authService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.authService.remove(id);
   }
 }

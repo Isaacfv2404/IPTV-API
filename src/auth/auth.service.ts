@@ -71,6 +71,8 @@ export class AuthService {
       ...updateUserDto
     });
 
+    user.updatedAt = new Date();
+
     if (!user) throw new NotFoundException(`User with id ${id} not found`);
 
     try {
@@ -85,8 +87,8 @@ export class AuthService {
 
   async remove(id: string) {
     
-    const product = await this.findOne(id);
-    await this.userRepository.remove(product);
+    const user = await this.findOne(id);
+    await this.userRepository.remove(user);
   }
 
   private getJwtToken(payload: JwtPayload){

@@ -20,16 +20,16 @@ export class User {
     lastName: string;
 
     @Column('bool',{name: 'is_active',default: 'true'})
-    isActive?: boolean;
+    isActive: boolean;
 
     @Column('date',{name: 'created_at',default: new Date()})
-    createdAt?: Date;
+    createdAt: Date;
 
     @Column('date',{name: 'updated_at',default: new Date()})
-    updatedAt?: Date;
+    updatedAt: Date;
 
     @Column('text',{array: true, default:['user']})
-    roles?: string[];
+    roles: string[];
 
     @BeforeInsert()
     checkFieldsBeforeInsert() {

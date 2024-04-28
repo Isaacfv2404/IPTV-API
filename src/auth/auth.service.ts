@@ -1,25 +1,25 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import { User } from './entities/user.entity';
+import { CreateUserDto, UpdateUserDto, LoginUserDto} from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { PaginationDto } from '../common/dtos/pagination.dto';
-import { validate as isUUID } from 'uuid';
-import { LoginUserDto,CreateUserDto,UpdateUserDto } from './dto';
-import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { JwtPayload } from './interfaces/jwt.payload.interface';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { isUUID } from 'class-validator';
+
 
 @Injectable()
-export class UserService {
+export class AuthService {
 
-  private readonly logger = new Logger('UserService');
+  private readonly logger = new Logger('AuthService');
 
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
-  ) { }
-
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
 
@@ -50,7 +50,7 @@ export class UserService {
   }
 
 
-  async findOne(term: string) {
+    async findOne(term: string) {
    
     let user: User;
 
@@ -63,7 +63,6 @@ export class UserService {
     if (!user) throw new BadRequestException(`User with ${term} not found`);
     return user;
   }
-
 
   async update(id: string, updateUserDto: UpdateUserDto) {
 
@@ -84,13 +83,18 @@ export class UserService {
 
   }
 
-
   async remove(id: string) {
     
     const product = await this.findOne(id);
     await this.userRepository.remove(product);
   }
 
+  private getJwtToken(payload: JwtPayload){
+
+    const token = this.jwtService.sign(payload);
+
+    return token;
+  }
 
   async login(loginUserDto: LoginUserDto) {
     const {email,password} =  loginUserDto;
@@ -110,13 +114,6 @@ export class UserService {
     };
     //TODO: Retornar el JWT de acceso
 
-  }
-
-  private getJwtToken(payload: JwtPayload){
-
-    const token = this.jwtService.sign(payload);
-
-    return token;
   }
 
   private handleDBExceptions(error: any): never {

@@ -3,8 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PlaylistModule } from './playlist/playlist.module';
 import { UserModule } from './user/user.module';
-import { SeedModule } from './seed/seed.module';
-import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from './common/common.module';
@@ -21,7 +19,7 @@ import { CommonModule } from './common/common.module';
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       synchronize: true,
-    }),PlaylistModule, UserModule, SeedModule, AuthModule, CommonModule],
+    }),PlaylistModule, UserModule, CommonModule],
   controllers: [AppController],
   providers: [AppService],
 })

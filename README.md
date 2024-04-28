@@ -68,6 +68,11 @@ Gestor Prisma Studio:
 $ npx prisma studio
 ```
 
+```bash
+Encrypt libreria CryptoJS
+$ npm i crypto-js
+$ npm i -D @types/crypto-js
+```
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).

@@ -8,7 +8,7 @@ import { PaginationDto } from 'src/common/dtos/pagination.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
+  @Post('/create')
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
@@ -32,5 +32,10 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.userService.remove(id);
+  }
+
+  @Post('/login')
+  async login(@Body() credentials: { gmail: string, password: string }) {
+    return this.userService.findUser(credentials.gmail, credentials.password);
   }
 }

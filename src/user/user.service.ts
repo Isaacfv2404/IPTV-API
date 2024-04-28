@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -53,6 +53,33 @@ export class UserService {
     if (!user) throw new BadRequestException(`User with ${term} not found`);
     return user;
   }
+/*
+  async findUser(email: string, password: string): Promise<User | null> {
+    let user: User;
+    user = await this.userRepository.findOneBy({ email:email });
+    if (!user) {
+      return null; 
+    }
+    const isPasswordValid = await this.comparePassword(password, user.password);
+    if (isPasswordValid) {
+      return user;
+    }
+    return null; 
+  }
+  
+  async comparePassword(password: string, passwordHash: string): Promise<boolean> {
+    return bcrypt.compare(password, passwordHash);
+  }
+*/
+
+async findUser(email: string, password: string): Promise<User | null> {
+  let user: User;
+  user = await this.userRepository.findOneBy({ email:email, password:password});
+  if (!user) {
+    throw new NotFoundException('Usuario no encontrado');  }
+    return user;
+  }
+ 
 
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;

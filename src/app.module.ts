@@ -1,5 +1,3 @@
-import { SeedModule } from './seed/seed.module';
-import { UserModule } from 'src/user/user.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';

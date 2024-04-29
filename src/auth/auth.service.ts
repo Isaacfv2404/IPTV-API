@@ -60,7 +60,7 @@ export class AuthService {
       const queryBuilder = this.userRepository.createQueryBuilder();//Se previene la inyección de SQL
       user = await queryBuilder.where('email = :email', { email: term.toLowerCase() }).getOne();
     }
-    if (!user) throw new BadRequestException(`User with ${term} not found`);
+    if (!user) throw new BadRequestException(`Usuario con ${term} no encontrado`);
     return user;
   }
 
@@ -73,7 +73,7 @@ export class AuthService {
 
     user.updatedAt = new Date();
 
-    if (!user) throw new NotFoundException(`User with id ${id} not found`);
+    if (!user) throw new NotFoundException(`Usuario con id ${id} no encontrado`);
 
     try {
       await this.userRepository.save(user);
@@ -107,9 +107,9 @@ export class AuthService {
       select: {email: true, password: true, id: true}
     });
 
-    if (!user) throw new UnauthorizedException('Invalid credentials (email)');
+    if (!user) throw new UnauthorizedException('El email es inválido');
 
-    if (!bcrypt.compareSync(password, user.password)) throw new UnauthorizedException('Invalid credentials (password)');
+    if (!bcrypt.compareSync(password, user.password)) throw new UnauthorizedException('La contraseña es inválida');
 
     return {...user,
       token: this.getJwtToken({id: user.id})
@@ -125,7 +125,7 @@ export class AuthService {
     }
 
     this.logger.error(error);
-    throw new InternalServerErrorException("Unexpected error ocurred, check server logs");
+    throw new InternalServerErrorException("Error inesperado, Revisa los logs del servidor");
 
   }
 }

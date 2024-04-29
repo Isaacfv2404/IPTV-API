@@ -1,9 +1,9 @@
+import { JwtService } from '@nestjs/jwt';
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto, LoginUserDto} from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { JwtPayload } from './interfaces/jwt.payload.interface';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';

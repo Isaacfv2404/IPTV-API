@@ -1,13 +1,11 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-
 import * as bcrypt from 'bcrypt';
-import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PaginationDto } from '../common/dtos/pagination.dto';
 import {validate as isUUID} from 'uuid';
+import { User } from 'src/auth/entities/user.entity';
+import { CreateUserDto, UpdateUserDto } from 'src/auth/dto';
 
 @Injectable()
 export class UserService {

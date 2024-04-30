@@ -9,6 +9,8 @@ import { JwtPayload } from './interfaces/jwt.payload.interface';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { isUUID } from 'class-validator';
 
+import {decode} from 'jsonwebtoken';
+
 
 @Injectable()
 export class AuthService {
@@ -18,6 +20,7 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
     private readonly jwtService: JwtService,
   ) {}
 
@@ -94,6 +97,8 @@ export class AuthService {
   private getJwtToken(payload: JwtPayload){
 
     const token = this.jwtService.sign(payload);
+    
+    
 
     return token;
   }
@@ -111,12 +116,17 @@ export class AuthService {
 
     if (!bcrypt.compareSync(password, user.password)) throw new UnauthorizedException('La contraseña es inválida');
 
-    return {...user,
+
+    
+    return {id: user.id ,email: user.email,
       token: this.getJwtToken({id: user.id})
     };
     //TODO: Retornar el JWT de acceso
 
   }
+
+
+
 
   private handleDBExceptions(error: any): never {
     

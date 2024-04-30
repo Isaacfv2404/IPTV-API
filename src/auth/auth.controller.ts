@@ -19,6 +19,7 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
+
   @Get('users')
   @UseGuards(AuthGuard())
   findAll(@Query() paginationDto: PaginationDto) {
@@ -26,7 +27,7 @@ export class AuthController {
     return this.authService.findAll(paginationDto);
   }
 
-  @Get('users:term')
+  @Get('user/:term')
   findOne(@Param('term') term: string) {
     return this.authService.findOne(term);
   }

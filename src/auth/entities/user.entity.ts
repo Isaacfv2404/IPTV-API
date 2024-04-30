@@ -1,5 +1,6 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
+
 @Entity('user')
 export class User {
     @PrimaryGeneratedColumn('uuid')
@@ -30,6 +31,7 @@ export class User {
 
     @Column('text',{array: true, default:['user']})
     roles: string[];
+
 
     @BeforeInsert()
     checkFieldsBeforeInsert() {

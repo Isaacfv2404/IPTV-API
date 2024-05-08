@@ -1,4 +1,5 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Playlist } from "src/playlist/entities/playlist.entity";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity('user')
@@ -32,6 +33,8 @@ export class User {
     @Column('text',{array: true, default:['user']})
     roles: string[];
 
+    @OneToMany(()=>Playlist, playlist => playlist.user)
+    playlists: Playlist[];
 
     @BeforeInsert()
     checkFieldsBeforeInsert() {

@@ -1,45 +1,32 @@
+
+import { User } from 'src/auth/entities/user.entity';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity('playlist')
 export class Playlist {
-    header: PlaylistHeader;
-    items: PlaylistItem[];
-  }
-  
-  export class PlaylistHeader {
-    attrs: {
-      'x-tvg-url': string;
-    };
-    raw: string;
-  }
-  
-  export class PlaylistItem {
-    name: string;
-    tvg: TvgInfo;
-    group: {
-      title: string;
-    };
-    http: HttpInfo;
-    url: string;
-    raw: string;
-    line: number;
-    timeshift: string;
-    catchup: CatchupInfo;
-  }
-  
-  export class TvgInfo {
-    id: string;
-    name: string;
-    url: string;
-    logo: string;
-    rec: string;
-    shift: string;
-  }
-  
-  export class HttpInfo {
-    referrer: string;
-    'user-agent': string;
-  }
-  
-  export class CatchupInfo {
-    type: string;
-    source: string;
-    days: string;
-  }
+
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column('text', { unique: true, name: 'tvg_id' })
+  tvgId: string;
+
+  @Column('int', { unique: true, name: 'tvg_number' })
+  tvgNumber: number;
+
+  @Column('text', { name: 'tvg_name' })
+  tvgName: string;
+
+  @Column('text', { name: 'tvg_logo' })
+  tvgLogo: string;
+
+  @Column('text', { name: 'tvg_group' })
+  tvgGroup: string;
+
+  @Column('text', { name: 'tvg_url' })
+  tvgUrl: string;
+
+  @ManyToOne(() => User, user => user.playlists)
+  user: User;
+
+}

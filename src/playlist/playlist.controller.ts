@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res, HttpException, HttpStatus, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common';
 import { PlaylistService } from './playlist.service';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
@@ -18,6 +18,11 @@ export class PlaylistController {
   @Get(':term')
   findOne(@Param('term') term: string) {
     return this.playlistService.findOne(term);
+  }
+
+  @Post()
+  create(@Body() createPlaylistDto: CreatePlaylistDto) {
+    return this.playlistService.create(createPlaylistDto);
   }
 
   @Patch(':id')

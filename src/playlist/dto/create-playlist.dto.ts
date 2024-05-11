@@ -1,25 +1,14 @@
-import { IsNumber, IsString } from "class-validator";
-import { User } from "src/auth/entities/user.entity";
+import { IsNotEmpty, IsString } from "class-validator";
+
 
 export class CreatePlaylistDto {
     
     @IsString()
-    tvgId: string;
-
-    @IsNumber()
-    tvgNumber: number
+    @IsNotEmpty()
+    name: string;
 
     @IsString()
-    tvgName: string;
-
-    @IsString()
-    tvgLogo: string;
-
-    @IsString()
-    tvgGroup: string;
-
-    @IsString()
-    tvgUrl: string;
-
+    @IsNotEmpty()
+    userId: string;
  
 }

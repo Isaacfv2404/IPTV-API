@@ -1,5 +1,6 @@
 
 import { User } from 'src/auth/entities/user.entity';
+import { Channel } from 'src/channel/entities/channel.entity';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('playlist')
@@ -8,23 +9,11 @@ export class Playlist {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('text', { unique: true, name: 'tvg_id' })
-  tvgId: string;
+  @Column('text', { unique: true })
+  name: string;
 
-  @Column('int', { unique: true, name: 'tvg_number' })
-  tvgNumber: number;
-
-  @Column('text', { name: 'tvg_name' })
-  tvgName: string;
-
-  @Column('text', { name: 'tvg_logo' })
-  tvgLogo: string;
-
-  @Column('text', { name: 'tvg_group' })
-  tvgGroup: string;
-
-  @Column('text', { name: 'tvg_url' })
-  tvgUrl: string;
+  @OneToMany(() => Channel, channel => channel.playlist)
+  channels: Channel[];
 
   @ManyToOne(() => User, user => user.playlists)
   user: User;

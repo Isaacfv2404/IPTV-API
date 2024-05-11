@@ -1,1 +1,26 @@
-export class CreateChannelDto {}
+import { IsNumber, IsString, MinLength } from "class-validator";
+
+export class CreateChannelDto {
+
+    @IsString()
+    tvgId: string;
+  
+    @IsNumber()
+    tvgNumber: number;
+  
+    @IsString()
+    @MinLength(3)
+    tvgName: string;
+  
+    @IsString()
+    tvgLogo: string;
+  
+    @IsString()
+    tvgGroup: string;
+  
+    @IsString()
+    tvgUrl: string;
+  
+    @IsString()
+    playlistId: string;
+}

@@ -54,7 +54,7 @@ export class PlaylistService {
       playlist = await this.playRepository.findOneBy({ id: term });
     } else {
       const queryBulder = this.playRepository.createQueryBuilder();
-      playlist = await queryBulder.where('tvg_id = :tvgId', { tvgId: term }).getOne();
+      playlist = await queryBulder.where('name = :name', { name: term }).getOne();
     }
 
     if (!playlist) throw new BadRequestException('No se encontró la playlist');

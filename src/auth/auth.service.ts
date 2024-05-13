@@ -9,8 +9,6 @@ import { JwtPayload } from './interfaces/jwt.payload.interface';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { isUUID } from 'class-validator';
 
-import {decode} from 'jsonwebtoken';
-
 
 @Injectable()
 export class AuthService {
@@ -48,7 +46,8 @@ export class AuthService {
     const { limit = 10, offset = 0 } = paginationDto;
     return this.userRepository.find({
       take: limit,
-      skip: offset
+      skip: offset,
+      relations: ['playlists']
     });
   }
 
@@ -58,10 +57,9 @@ export class AuthService {
     let user: User;
 
     if (isUUID(term)) {
-      user = await this.userRepository.findOneBy({ id: term });
+      user = await this.userRepository.findOne({ where: { id: term }, relations: ['playlists'] });
     } else {
-      const queryBuilder = this.userRepository.createQueryBuilder();//Se previene la inyección de SQL
-      user = await queryBuilder.where('email = :email', { email: term.toLowerCase() }).getOne();
+      user = await this.userRepository.findOne({ where: { email: term.toLowerCase() }, relations: ['playlists'] });
     }
     if (!user) throw new BadRequestException(`Usuario con ${term} no encontrado`);
     return user;

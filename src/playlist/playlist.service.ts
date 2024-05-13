@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { isUUID } from 'class-validator';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
+import { User } from 'src/auth/entities/user.entity';
 
 const pipelineAsync = promisify(pipeline);
 
@@ -21,13 +22,24 @@ export class PlaylistService {
   constructor(
     @InjectRepository(Playlist)
     private readonly playRepository: Repository<Playlist>,
+
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User> 
+
   ) { }
 
 
   async create(createPlaylistDto: CreatePlaylistDto) {
+    
+    let user: User;
     try {
+      user = await this.userRepository.findOneBy({ id: createPlaylistDto.userId });
+
+      if (!user) throw new BadRequestException('Usuario no encontrado');
+
       const playlist = this.playRepository.create({
-        ...createPlaylistDto
+        ...createPlaylistDto,
+        user: user
       });
       await this.playRepository.save(playlist);
       return playlist;
@@ -42,7 +54,8 @@ export class PlaylistService {
     const { limit = 10, offset = 0 } = paginationDto;
     return this.playRepository.find({
       take: limit,
-      skip: offset
+      skip: offset,
+      relations: ['user']
     });
 
   }
@@ -51,10 +64,13 @@ export class PlaylistService {
     let playlist: Playlist;
 
     if (isUUID(term)) {
-      playlist = await this.playRepository.findOneBy({ id: term });
+      playlist = await this.playRepository.findOne({ where: { id: term }, relations: ['user'] });
     } else {
-      const queryBulder = this.playRepository.createQueryBuilder();
-      playlist = await queryBulder.where('name = :name', { name: term }).getOne();
+      playlist = await this.playRepository
+      .createQueryBuilder('playlist')
+      .leftJoinAndSelect('playlist.user', 'user')
+      .where('playlist.name = :name', { name: term })
+      .getOne();
     }
 
     if (!playlist) throw new BadRequestException('No se encontró la playlist');

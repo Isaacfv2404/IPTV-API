@@ -6,6 +6,7 @@ import { Channel } from './entities/channel.entity';
 import { Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { isUUID } from 'class-validator';
+import { Playlist } from 'src/playlist/entities/playlist.entity';
 
 @Injectable()
 export class ChannelService {
@@ -15,13 +16,21 @@ export class ChannelService {
   constructor(
     @InjectRepository(Channel)
     private channelRepository: Repository<Channel>,
+
+    @InjectRepository(Playlist)
+    private playlistRepository: Repository<Playlist>
   ) { }
 
   async create(createChannelDto: CreateChannelDto) {
 
+    let playlist: Playlist;
+
     try {
+      playlist = await this.playlistRepository.findOneBy({ id: createChannelDto.playlistId });
+      if (!playlist) throw new BadRequestException('Lista de reproducción no encontrada');
       const channel = this.channelRepository.create({
-        ...createChannelDto
+        ...createChannelDto,
+        playlist: playlist
       });
       await this.channelRepository.save(channel);
       return channel;
@@ -35,7 +44,8 @@ export class ChannelService {
     const { limit = 10, offset = 0 } = paginationDto;
     return this.channelRepository.find({
       take: limit,
-      skip: offset
+      skip: offset,
+      relations: ['playlist']
     });
   }
 
@@ -44,10 +54,12 @@ export class ChannelService {
     let channel: Channel;
 
     if (isUUID(term)) {
-      channel = await this.channelRepository.findOneBy({ id: term });
+      channel = await this.channelRepository.findOne({ where: { id: term }, relations: ['playlists'] });
     } else {
-      const queryBulder = this.channelRepository.createQueryBuilder();
-      channel = await queryBulder.where('tvgName = :tvg_name', { tvgName: term }).getOne();
+      const queryBuilder = this.channelRepository.createQueryBuilder('channel')
+      .leftJoinAndSelect('channel.playlists', 'playlists')
+      .where('channel.tvg_name = :tvgName', { tvgName: term });
+      channel = await queryBuilder.getOne();
     }
 
     if (!channel) throw new BadRequestException('No se encontró el canal');

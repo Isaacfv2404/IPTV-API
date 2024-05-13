@@ -78,6 +78,16 @@ export class PlaylistService {
     return playlist;
   }
 
+  async findOneByUserId(userId: string): Promise<Playlist[]> {
+    const playlists = await this.playRepository
+      .createQueryBuilder('playlist')
+      .leftJoinAndSelect('playlist.user', 'user')
+      .where('user.id = :userId', { userId })
+      .getMany();
+
+    return playlists;
+  }
+
   async update(id: string, updatePlaylistDto: UpdatePlaylistDto) {
 
     const playList = await this.playRepository.preload({

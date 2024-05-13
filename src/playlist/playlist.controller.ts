@@ -20,6 +20,11 @@ export class PlaylistController {
     return this.playlistService.findOne(term);
   }
 
+  @Get('user/:userId')
+  findUserPlaylists(@Param('userId', ParseUUIDPipe) userId: string) {
+    return this.playlistService.findOneByUserId(userId);
+  }
+
   @Post()
   create(@Body() createPlaylistDto: CreatePlaylistDto) {
     return this.playlistService.create(createPlaylistDto);

@@ -45,8 +45,10 @@ export class PlaylistController {
   exportPlayList(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
     const playlist = this.playlistService.generateM3u8Content(id);
 
-    res.setHeader('Content-Type', 'application/x-mpegURL');
+    res.setHeader('Content-Type', 'audio/mpegurl');
     res.send(playlist);
+
+    return playlist;
   }
   
   @Get('import')

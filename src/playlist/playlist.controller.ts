@@ -42,9 +42,10 @@ export class PlaylistController {
   }
 
   @Get('export/:id')
-  exportPlayList(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
-    const playlist = this.playlistService.generateM3u8Content(id);
-
+  async exportPlayList(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
+    const playlist = await this.playlistService.generateM3u8Content(id);
+    console.log(playlist);
+    res.setHeader('Content-Disposition', 'attachment; filename=playlist.m3u');
     res.setHeader('Content-Type', 'audio/mpegurl');
     res.send(playlist);
 

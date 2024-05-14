@@ -130,14 +130,16 @@ export class PlaylistService {
     return result;
   }
 
-  async generateM3u8Content(playlistId: string): Promise<string> {
+  async generateM3u8Content(playlistId: string) {
      
     const playlist = await this.findOne(playlistId);
     let content = '#EXTM3U\n';
     playlist.channels.forEach(channel => {
-      content += `#EXTINF:-1 tvg-id="${channel.tvgId}" tvg-name="${channel.tvgName}" tvg-chno="${channel.tvgNumber}" tvg-logo="${channel.tvgLogo}" group-title="${channel.tvgGroup}",${channel.tvgDetail}\n`;
+      content += `#EXTINF:-1 tvg-id="${channel.tvgId}" tvg-name="${channel.tvgName}" tvg-chno="${channel.tvgNumber}" tvg-logo="${channel.tvgLogo}" group-title="${channel.tvgGroup}, "${channel.tvgDetail}\n`;
       content += `${channel.tvgUrl}\n`;
     });
+
+    if (!content) throw new BadRequestException('No se encontraron canales en la playlist');
 
     return content;
   }

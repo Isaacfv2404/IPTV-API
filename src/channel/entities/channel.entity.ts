@@ -7,10 +7,10 @@ export class Channel {
     @PrimaryGeneratedColumn('uuid')
     id: string;
   
-    @Column('text', { unique: true, name: 'tvg_id' })
+    @Column('text', { name: 'tvg_id' })
     tvgId: string;
   
-    @Column('int', { unique: true, name: 'tvg_number' })
+    @Column('int', { name: 'tvg_number' })
     tvgNumber: number;
   
     @Column('text', { name: 'tvg_name' })

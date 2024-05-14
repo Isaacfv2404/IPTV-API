@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe, Res } from '@nestjs/common';
 import { PlaylistService } from './playlist.service';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { Response } from 'express';
 
 
 @Controller('playlist')
@@ -40,6 +41,14 @@ export class PlaylistController {
     return this.playlistService.remove(id);
   }
 
+  @Get('export/:id')
+  exportPlayList(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
+    const playlist = this.playlistService.generateM3u8Content(id);
+
+    res.setHeader('Content-Type', 'application/x-mpegURL');
+    res.send(playlist);
+  }
+  
   @Get('import')
   importPlayList() {
     const playlist = this.playlistService.importPlaylist();

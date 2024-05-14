@@ -64,7 +64,7 @@ export class PlaylistService {
     let playlist: Playlist;
 
     if (isUUID(term)) {
-      playlist = await this.playRepository.findOne({ where: { id: term }, relations: ['user'] });
+      playlist = await this.playRepository.findOne({ where: { id: term }, relations: ['user','channels'] });
     } else {
       playlist = await this.playRepository
       .createQueryBuilder('playlist')
@@ -128,6 +128,18 @@ export class PlaylistService {
     const result = parse(data);
 
     return result;
+  }
+
+  async generateM3u8Content(playlistId: string): Promise<string> {
+     
+    const playlist = await this.findOne(playlistId);
+    let content = '#EXTM3U\n';
+    playlist.channels.forEach(channel => {
+      content += `#EXTINF:-1 tvg-id="${channel.tvgId}" tvg-name="${channel.tvgName}" tvg-chno="${channel.tvgNumber}" tvg-logo="${channel.tvgLogo}" group-title="${channel.tvgGroup}",${channel.tvgDetail}\n`;
+      content += `${channel.tvgUrl}\n`;
+    });
+
+    return content;
   }
 
   private handleDBExceptions(error: any): never {

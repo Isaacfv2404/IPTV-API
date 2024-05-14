@@ -21,6 +21,9 @@ export class Channel {
   
     @Column('text', { name: 'tvg_group' })
     tvgGroup: string;
+
+    @Column('text', { name: 'tvg_detail' })
+    tvgDetail: string;
   
     @Column('text', { name: 'tvg_url' })
     tvgUrl: string;

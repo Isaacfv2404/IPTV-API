@@ -18,9 +18,13 @@ export class CreateChannelDto {
     @IsString()
     tvgGroup: string;
   
+
+    @IsString()
+    tvgDetail: string;
+
     @IsString()
     tvgUrl: string;
-  
+
     @IsString()
     playlistId: string;
 }

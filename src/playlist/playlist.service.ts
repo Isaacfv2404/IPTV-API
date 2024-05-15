@@ -24,13 +24,13 @@ export class PlaylistService {
     private readonly playRepository: Repository<Playlist>,
 
     @InjectRepository(User)
-    private readonly userRepository: Repository<User> 
+    private readonly userRepository: Repository<User>
 
   ) { }
 
 
   async create(createPlaylistDto: CreatePlaylistDto) {
-    
+
     let user: User;
     try {
       user = await this.userRepository.findOneBy({ id: createPlaylistDto.userId });
@@ -64,13 +64,13 @@ export class PlaylistService {
     let playlist: Playlist;
 
     if (isUUID(term)) {
-      playlist = await this.playRepository.findOne({ where: { id: term }, relations: ['user','channels'] });
+      playlist = await this.playRepository.findOne({ where: { id: term }, relations: ['user', 'channels'] });
     } else {
       playlist = await this.playRepository
-      .createQueryBuilder('playlist')
-      .leftJoinAndSelect('playlist.user', 'user')
-      .where('playlist.name = :name', { name: term })
-      .getOne();
+        .createQueryBuilder('playlist')
+        .leftJoinAndSelect('playlist.user', 'user')
+        .where('playlist.name = :name', { name: term })
+        .getOne();
     }
 
     if (!playlist) throw new BadRequestException('No se encontró la playlist');
@@ -131,11 +131,11 @@ export class PlaylistService {
   }
 
   async generateM3u8Content(playlistId: string) {
-     
+
     const playlist = await this.findOne(playlistId);
     let content = '#EXTM3U\n';
     playlist.channels.forEach(channel => {
-      content += `#EXTINF:-1 tvg-id="${channel.tvgId}" tvg-name="${channel.tvgName}" tvg-chno="${channel.tvgNumber}" tvg-logo="${channel.tvgLogo}" group-title="${channel.tvgGroup}, "${channel.tvgDetail}\n`;
+      content += `#EXTINF: -1 tvg-id="${channel.tvgId}" tvg-chno="${channel.tvgNumber}" tvg-logo="${channel.tvgLogo}" group-title="${channel.tvgGroup}", ${channel.tvgDetail}\n`;
       content += `${channel.tvgUrl}\n`;
     });
 

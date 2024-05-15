@@ -46,7 +46,7 @@ export class PlaylistController {
     const playlist = await this.playlistService.generateM3u8Content(id);
     console.log(playlist);
     res.setHeader('Content-Disposition', 'attachment; filename=playlist.m3u');
-    res.setHeader('Content-Type', 'audio/mpegurl');
+    res.setHeader('Content-Type', 'application/x-mpegURL');
     res.send(playlist);
 
     return playlist;

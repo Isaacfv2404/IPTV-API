@@ -58,14 +58,22 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Prisma
+## TypeORM
 
 ```bash
-Migrar base de datos:
-$ npx prisma migrate dev --name init
 
-Gestor Prisma Studio:
-$ npx prisma studio
+Configurar package.json:
+ "scripts": {
+ "migrate": "ts-node node_modules/.bin/typeorm migration:run",
+ "migration:create": "ts-node node_modules/.bin/typeorm migration:create -n",
+ "migration:revert": "ts-node node_modules/.bin/typeorm migration:revert"
+ },
+
+Migrar base de datos:
+$ npm run migrate
+
+Crear migración:
+$ npm run migration:create NombreMigracion
 ```
 
 ```bash
@@ -73,6 +81,7 @@ Encrypt libreria CryptoJS
 $ npm i crypto-js
 $ npm i -D @types/crypto-js
 ```
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).

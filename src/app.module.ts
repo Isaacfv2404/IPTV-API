@@ -20,7 +20,7 @@ import { ChannelModule } from './channel/channel.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
     }),PlaylistModule, CommonModule, AuthModule, ChannelModule],
   controllers: [AppController],
   providers: [AppService],

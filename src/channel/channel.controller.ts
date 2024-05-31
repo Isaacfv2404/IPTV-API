@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common';
 import { ChannelService } from './channel.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
@@ -21,6 +21,11 @@ export class ChannelController {
   @Get(':term')
   findOne(@Param('term') term: string) {
     return this.channelService.findOne(term);
+  }
+
+  @Get('by_playlist/:playlistId')
+  findAllByPlaylistId(@Param('playlistId', ParseUUIDPipe) playlistId: string) {
+    return this.channelService.findAllByPlaylistId(playlistId);
   }
 
   @Patch(':id')

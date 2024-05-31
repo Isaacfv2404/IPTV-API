@@ -49,6 +49,13 @@ export class ChannelService {
     });
   }
 
+  findAllByPlaylistId(playlistId: string) {
+    return this.channelRepository.find({
+      where: { playlist: { id: playlistId } },
+      relations: ['playlist']
+    });
+  }
+
   async findOne(term: string) {
 
     let channel: Channel;

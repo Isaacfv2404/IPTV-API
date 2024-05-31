@@ -61,11 +61,11 @@ export class ChannelService {
     let channel: Channel;
 
     if (isUUID(term)) {
-      channel = await this.channelRepository.findOne({ where: { id: term }, relations: ['playlists'] });
+      channel = await this.channelRepository.findOne({ where: { id: term }, relations: ['playlist'] });
     } else {
       const queryBuilder = this.channelRepository.createQueryBuilder('channel')
-      .leftJoinAndSelect('channel.playlists', 'playlists')
-      .where('channel.tvg_name = :tvgName', { tvgName: term });
+        .leftJoinAndSelect('channel.playlist', 'playlist')
+        .where('channel.tvg_name = :tvgName', { tvgName: term });
       channel = await queryBuilder.getOne();
     }
 
@@ -96,7 +96,7 @@ export class ChannelService {
   }
 
   async remove(id: string) {
-    const channel = await this.findOne(id);
+    const channel = await this.channelRepository.findOne({ where: { id: id }, relations: ['playlist'] });
     await this.channelRepository.remove(channel);
   }
 

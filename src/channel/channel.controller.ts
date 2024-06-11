@@ -37,4 +37,9 @@ export class ChannelController {
   remove(@Param('id') id: string) {
     return this.channelService.remove(id);
   }
+
+  @Post('import/:id')
+  import(@Param('id', ParseUUIDPipe) id: string, @Body() createChannelDto: CreateChannelDto[]){
+    return this.channelService.importChannels(id, createChannelDto);
+  }
 }

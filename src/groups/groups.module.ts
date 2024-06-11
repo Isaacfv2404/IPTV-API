@@ -9,6 +9,7 @@ import { Channel } from 'src/channel/entities/channel.entity';
 @Module({
   controllers: [GroupsController],
   providers: [GroupsService],
-  imports: [TypeOrmModule.forFeature([Group,Playlist,Channel])]
+  imports: [TypeOrmModule.forFeature([Group,Playlist,Channel])],
+  exports: [GroupsService]
 })
 export class GroupsModule {}

@@ -7,18 +7,22 @@ import { Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { isUUID } from 'class-validator';
 import { Playlist } from 'src/playlist/entities/playlist.entity';
+import { GroupsService } from 'src/groups/groups.service';
+import { Group } from 'src/groups/entities/group.entity';
+import { CreateGroupDto } from 'src/groups/dto/create-group.dto';
 
 @Injectable()
 export class ChannelService {
 
   private readonly logger = new Logger('ChannelService');
-
+  
   constructor(
     @InjectRepository(Channel)
     private channelRepository: Repository<Channel>,
 
     @InjectRepository(Playlist)
-    private playlistRepository: Repository<Playlist>
+    private playlistRepository: Repository<Playlist>,
+    private groupsService: GroupsService
   ) { }
 
   async create(createChannelDto: CreateChannelDto) {
@@ -98,6 +102,50 @@ export class ChannelService {
   async remove(id: string) {
     const channel = await this.channelRepository.findOne({ where: { id: id }, relations: ['playlist'] });
     await this.channelRepository.remove(channel);
+  }
+
+  async importChannels(playlistId: string, channels: CreateChannelDto[]): Promise<Channel[]> {
+    let playlist: Playlist;
+
+    try {
+      playlist = await this.playlistRepository.findOne({ where: { id: playlistId } });
+      if (!playlist) throw new BadRequestException('Lista de reproducción no encontrada');
+
+      // Crea un mapa para almacenar los grupos creados
+      const groupMap = new Map<string, Group>();
+      
+      for (const group of playlist.groups) {
+        groupMap.set(group.name, group);
+      }
+
+      // Crea los grupos necesarios
+      for (const channel of channels) {
+        const groupName = channel.tvgGroup || 'General'; //Establece General por defecto
+        if (!groupMap.has(groupName)) {
+          const createGroupDto: CreateGroupDto = {
+            name: groupName,
+            playlistId: playlistId,
+          };
+          const group = await this.groupsService.create(createGroupDto);
+          groupMap.set(groupName, group);
+        }
+      }
+
+      // Crear y guardar los canales
+      const channelsToSave = channels.map(channel => {
+        return this.channelRepository.create({
+          ...channel,
+          playlist: playlist,
+          group: groupMap.get(channel.tvgGroup || 'General'),
+        });
+      });
+
+      await this.channelRepository.save(channelsToSave);
+      return channelsToSave;
+
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
   private handleDBExceptions(error: any): never {

@@ -1,6 +1,7 @@
 
 import { User } from 'src/auth/entities/user.entity';
 import { Channel } from 'src/channel/entities/channel.entity';
+import { Group } from 'src/groups/entities/group.entity';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('playlist')
@@ -17,5 +18,8 @@ export class Playlist {
 
   @ManyToOne(() => User, user => user.playlists)
   user: User;
+
+  @OneToMany(() => Group, group => group.playlist)
+  groups: Group[];
 
 }

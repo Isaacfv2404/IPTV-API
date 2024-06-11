@@ -12,6 +12,7 @@ import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { isUUID } from 'class-validator';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
 import { User } from 'src/auth/entities/user.entity';
+import { Group } from 'src/groups/entities/group.entity';
 
 const pipelineAsync = promisify(pipeline);
 
@@ -24,7 +25,10 @@ export class PlaylistService {
     private readonly playRepository: Repository<Playlist>,
 
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+
+    @InjectRepository(Group)
+    private readonly groupRepository: Repository<Group>
 
   ) { }
 
@@ -42,12 +46,22 @@ export class PlaylistService {
         user: user
       });
       await this.playRepository.save(playlist);
+
+
+      const newGeneralGroup = this.groupRepository.create({
+        name: 'General',
+        playlist: playlist,
+      });
+
+      await this.groupRepository.save(newGeneralGroup);
+
       return playlist;
     }
     catch (error) {
       this.handleDBExceptions(error);
     }
   }
+
 
   findAll(paginationDto: PaginationDto) {
 

@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from './common/common.module';
 import { AuthModule } from './auth/auth.module';
 import { ChannelModule } from './channel/channel.module';
+import { GroupsModule } from './groups/groups.module';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { ChannelModule } from './channel/channel.module';
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       synchronize: false,
-    }),PlaylistModule, CommonModule, AuthModule, ChannelModule],
+    }),PlaylistModule, CommonModule, AuthModule, ChannelModule, GroupsModule],
   controllers: [AppController],
   providers: [AppService],
 })

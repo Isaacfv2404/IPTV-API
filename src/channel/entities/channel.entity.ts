@@ -1,3 +1,4 @@
+import { Group } from "src/groups/entities/group.entity";
 import { Playlist } from "src/playlist/entities/playlist.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -30,4 +31,7 @@ export class Channel {
 
     @ManyToOne(() => Playlist, playlist => playlist.channels)
     playlist: Playlist;
+
+    @ManyToOne(() => Group, group => group.channels)
+    group: Group;
 }

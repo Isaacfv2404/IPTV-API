@@ -17,7 +17,6 @@ export class CreateChannelDto {
   
     @IsString()
     tvgGroup: string;
-  
 
     @IsString()
     tvgDetail: string;
@@ -27,4 +26,7 @@ export class CreateChannelDto {
 
     @IsString()
     playlistId: string;
+
+    @IsString()
+    groupId: string;
 }

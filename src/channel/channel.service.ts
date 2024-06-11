@@ -49,14 +49,14 @@ export class ChannelService {
     return this.channelRepository.find({
       take: limit,
       skip: offset,
-      relations: ['playlist']
+      relations: ['playlist', 'group']
     });
   }
 
   findAllByPlaylistId(playlistId: string) {
     return this.channelRepository.find({
       where: { playlist: { id: playlistId } },
-      relations: ['playlist']
+      relations: ['playlist', 'group']
     });
   }
 

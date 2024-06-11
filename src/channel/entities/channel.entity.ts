@@ -14,9 +14,6 @@ export class Channel {
     @Column('int', { name: 'tvg_number' })
     tvgNumber: number;
   
-    @Column('text', { name: 'tvg_name' })
-    tvgName: string;
-  
     @Column('text', { name: 'tvg_logo' })
     tvgLogo: string;
   

@@ -1,4 +1,4 @@
-import { IsNumber, IsString, MinLength } from "class-validator";
+import { IsNumber, IsString} from "class-validator";
 
 export class CreateChannelDto {
 
@@ -7,10 +7,6 @@ export class CreateChannelDto {
   
     @IsNumber()
     tvgNumber: number;
-  
-    @IsString()
-    @MinLength(3)
-    tvgName: string;
   
     @IsString()
     tvgLogo: string;

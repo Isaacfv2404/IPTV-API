@@ -69,7 +69,7 @@ export class ChannelService {
     } else {
       const queryBuilder = this.channelRepository.createQueryBuilder('channel')
         .leftJoinAndSelect('channel.playlist', 'playlist')
-        .where('channel.tvg_name = :tvgName', { tvgName: term });
+        .where('channel.tvg_id = :tvgId', { tvgId: term });
       channel = await queryBuilder.getOne();
     }
 
@@ -108,12 +108,12 @@ export class ChannelService {
     let playlist: Playlist;
 
     try {
-      playlist = await this.playlistRepository.findOne({ where: { id: playlistId } });
+      playlist = await this.playlistRepository.findOne({ where: { id: playlistId }, relations: ['groups']});
       if (!playlist) throw new BadRequestException('Lista de reproducción no encontrada');
 
       // Crea un mapa para almacenar los grupos creados
       const groupMap = new Map<string, Group>();
-      
+
       for (const group of playlist.groups) {
         groupMap.set(group.name, group);
       }
@@ -133,6 +133,9 @@ export class ChannelService {
 
       // Crear y guardar los canales
       const channelsToSave = channels.map(channel => {
+        if (!channel.tvgNumber) {
+          channel.tvgNumber = 0;
+        }
         return this.channelRepository.create({
           ...channel,
           playlist: playlist,

@@ -10,12 +10,14 @@ import { Playlist } from 'src/playlist/entities/playlist.entity';
 import { GroupsService } from 'src/groups/groups.service';
 import { Group } from 'src/groups/entities/group.entity';
 import { CreateGroupDto } from 'src/groups/dto/create-group.dto';
+import axios from 'axios';
+import { group } from 'console';
 
 @Injectable()
 export class ChannelService {
 
   private readonly logger = new Logger('ChannelService');
-  
+
   constructor(
     @InjectRepository(Channel)
     private channelRepository: Repository<Channel>,
@@ -28,13 +30,17 @@ export class ChannelService {
   async create(createChannelDto: CreateChannelDto) {
 
     let playlist: Playlist;
+    let group: Group
 
     try {
       playlist = await this.playlistRepository.findOneBy({ id: createChannelDto.playlistId });
+      group = await this.groupsService.findOne(createChannelDto.groupId);
       if (!playlist) throw new BadRequestException('Lista de reproducción no encontrada');
+      if (!group) throw new BadRequestException('Grupo no encontrado');
       const channel = this.channelRepository.create({
         ...createChannelDto,
-        playlist: playlist
+        playlist: playlist,
+        group: group
       });
       await this.channelRepository.save(channel);
       return channel;
@@ -65,7 +71,7 @@ export class ChannelService {
     let channel: Channel;
 
     if (isUUID(term)) {
-      channel = await this.channelRepository.findOne({ where: { id: term }, relations: ['playlist'] });
+      channel = await this.channelRepository.findOne({ where: { id: term }, relations: ['playlist', 'group'] });
     } else {
       const queryBuilder = this.channelRepository.createQueryBuilder('channel')
         .leftJoinAndSelect('channel.playlist', 'playlist')
@@ -108,7 +114,7 @@ export class ChannelService {
     let playlist: Playlist;
 
     try {
-      playlist = await this.playlistRepository.findOne({ where: { id: playlistId }, relations: ['groups']});
+      playlist = await this.playlistRepository.findOne({ where: { id: playlistId }, relations: ['groups'] });
       if (!playlist) throw new BadRequestException('Lista de reproducción no encontrada');
 
       // Crea un mapa para almacenar los grupos creados
@@ -148,6 +154,15 @@ export class ChannelService {
 
     } catch (error) {
       this.handleDBExceptions(error);
+    }
+  }
+
+  async pingUrl(url: string): Promise<boolean> {
+    try {
+      const response = await axios.get(url, { timeout: 5000 });
+      return response.status === 200;
+    } catch (error) {
+      return false;
     }
   }
 

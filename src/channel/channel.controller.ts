@@ -6,7 +6,7 @@ import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Controller('channel')
 export class ChannelController {
-  constructor(private readonly channelService: ChannelService) { }
+  constructor(private readonly channelService: ChannelService) {}
 
   @Post()
   create(@Body() createChannelDto: CreateChannelDto) {
@@ -16,6 +16,12 @@ export class ChannelController {
   @Get()
   findAll(@Query() paginationDto: PaginationDto) {
     return this.channelService.findAll(paginationDto);
+  }
+
+  @Get('ping')
+  async ping(@Query('url') url: string){
+   const isOnline = await this.channelService.pingUrl(url);
+   return { status: isOnline ? 'online' : 'offline' };
   }
 
   @Get(':term')
@@ -39,13 +45,9 @@ export class ChannelController {
   }
 
   @Post('import/:id')
-  import(@Param('id', ParseUUIDPipe) id: string, @Body() createChannelDto: CreateChannelDto[]) {
+  import(@Param('id', ParseUUIDPipe) id: string, @Body() createChannelDto: CreateChannelDto[]){
     return this.channelService.importChannels(id, createChannelDto);
   }
 
-  @Get('ping/:url')
-  ping(@Param('url') url: string) {
-    const isOnline = this.channelService.pingUrl(url);
-    return { status: isOnline ? 'online' : 'offline' };
-  }
+
 }

@@ -11,7 +11,6 @@ import { GroupsService } from 'src/groups/groups.service';
 import { Group } from 'src/groups/entities/group.entity';
 import { CreateGroupDto } from 'src/groups/dto/create-group.dto';
 import axios from 'axios';
-import { group } from 'console';
 
 @Injectable()
 export class ChannelService {
@@ -157,15 +156,17 @@ export class ChannelService {
     }
   }
 
-  async pingUrl(url: string): Promise<boolean> {
+  async pingUrl(url: string) {
     try {
       const response = await axios.get(url, { timeout: 5000 });
       return response.status === 200;
     } catch (error) {
+      console.log(error);
       return false;
     }
   }
 
+  
   private handleDBExceptions(error: any): never {
 
     if (error.code === '23505') {

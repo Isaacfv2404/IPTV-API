@@ -85,14 +85,25 @@ export class ChannelService {
 
   async update(id: string, updateChannelDto: UpdateChannelDto) {
 
+    const { groupId, ...updateData } = updateChannelDto;
+
     const channel = await this.channelRepository.preload({
 
       id: id,
-      ...updateChannelDto
+      ...updateData
 
     });
 
     if (!channel) throw new BadRequestException(`Canal con id ${id} no encontrado`);
+
+    if (updateChannelDto.groupId !== null){
+      const group = await this.groupsService.findOne(groupId);
+
+      if (!group) throw new BadRequestException(`Grupo con id ${groupId} no encontrado`);
+      
+      channel.group = group;
+    }
+    
 
     try {
       await this.channelRepository.save(channel);

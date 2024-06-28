@@ -35,8 +35,8 @@ export class ChannelController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateChannelDto: UpdateChannelDto) {
-    return this.channelService.update(id, updateChannelDto);
+  async update(@Param('id') id: string, @Body() updateChannelDto: UpdateChannelDto) {
+    return await this.channelService.update(id, updateChannelDto);
   }
 
   @Delete(':id')
